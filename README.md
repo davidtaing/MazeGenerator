@@ -1,5 +1,5 @@
 # Maze-Generator
-Recursive Backtracker Algorithim in C#
+Recursive Backtracker Algorithm in C#
 This program was created for an assignment at school. I was tasked to create a DLL that could be of use in a gaming project.
 
 How it works:
