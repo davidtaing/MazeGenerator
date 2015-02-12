@@ -29,7 +29,15 @@ namespace Level
         private void Initialise()
         {
             Board = new Cell[Height, Width];
-            InitBoard();
+
+            //Populate default values of the cells
+            for (int row = 0; row < Height; row++)
+            {
+                for (int col = 0; col < Width; col++)
+                {
+                    Board[row, col] = new Cell();
+                }
+            }
         }
 
         /// <summary>
