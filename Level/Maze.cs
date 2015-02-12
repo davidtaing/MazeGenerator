@@ -19,37 +19,24 @@ namespace Level
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="height"></param>
-        /// <param name="width"></param>
         public Maze()
         {
             Initialise();
         }
 
+        /// <summary>
+        /// Creates board and populates all cells with default values.
+        /// </summary>
         private void Initialise()
         {
-            Board = new Cell[Height, Width];
+            Board = new Cell[Width, Height];
 
             //Populate default values of the cells
-            for (int row = 0; row < Height; row++)
+            for (int col = 0; col < Width; col++)
             {
-                for (int col = 0; col < Width; col++)
+                for (int row = 0; row < Height; row++)
                 {
-                    Board[row, col] = new Cell();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Initialises instances of all cells on the board
-        /// </summary>
-        private void InitBoard()
-        {
-            for (int row = 0; row < Height; row++)
-            {
-                for (int col = 0; col < Width; col++)
-                {
-                    Board[row, col] = new Cell();
+                    Board[col, row] = new Cell();
                 }
             }
         }
@@ -59,9 +46,9 @@ namespace Level
         /// </summary>
         public void Generate()
         {
-            Generate(r.Next(Height), r.Next(Width));
+            Generate(r.Next(Width), r.Next(Height));
         }
-
+        
         /// <summary>
         /// Generates a maze using the recursive backtracker algorithim.
         /// </summary>
@@ -69,11 +56,12 @@ namespace Level
         /// <param name="startY"></param>
         public void Generate(int startX, int startY)
         {
+            Initialise();
             CarvePassage(startX, startY);
         }
 
         /// <summary>
-        /// 
+        /// Sub-routine in the generate method.
         /// </summary>
         /// <param name="currentPos"></param>
         private void CarvePassage(CellPosition currentPos)
@@ -90,21 +78,19 @@ namespace Level
                 else if (validDirections.Count == 1)
                     rndDirection = validDirections[0];
 
-
-                CellPosition newPos = GetAdjTilePos(currentPos, rndDirection);
-
-                //Remove selected direction for validDirections List
-                validDirections.Remove(rndDirection);
-
-
-
                 //Remove corresponding wall
                 RemoveWall(currentPos, rndDirection);
                 Board[currentPos.X, currentPos.Y].Visited = true;
 
+                //Remove selected direction for validDirections List
+                validDirections.Remove(rndDirection);
+
                 //Recursively call CarvePassage if rndDirection is valid
                 if (rndDirection != Direction.INVALID)
+                {
+                    CellPosition newPos = GetAdjTilePos(currentPos, rndDirection);
                     CarvePassage(newPos);
+                }
 
                 //Update Valid Directions
                 GetValidDirections(currentPos, validDirections);
@@ -121,10 +107,10 @@ namespace Level
             CarvePassage(new CellPosition(currentX, currentY));
         }
 
+        #region CarvePassage Subroutines
         /// <summary>
-        /// Populates all direction in the provided list
+        /// Populates the provided list with all directions
         /// </summary>
-        /// <param name="validDirections"></param>
         private List<Direction> PopulateDirections()
         {
             List<Direction> validDirections = new List<Direction>() {
@@ -138,18 +124,18 @@ namespace Level
         }
 
         /// <summary>
-        /// Returns all valid directions for the provided cell
+        /// Validates directions for the provided cell
         /// </summary>
         /// <param name="cellPos"></param>
-        /// <returns></returns>
-        private List<Direction> GetValidDirections(CellPosition cellPos, List<Direction> validDirections)
+        /// <param name="directions"></param>
+        private void GetValidDirections(CellPosition cellPos, List<Direction> directions)
         {
             List<Direction> invalidMoves = new List<Direction>();
 
             //Checking for invalid moves
-            for (int i = 0; i < validDirections.Count; i++)
+            for (int i = 0; i < directions.Count; i++)
             {
-                switch (validDirections[i])
+                switch (directions[i])
                 {
                     case Direction.North:
                         if (cellPos.Y == 0 || CellVisited(cellPos.X, cellPos.Y - 1))
@@ -173,48 +159,46 @@ namespace Level
 
             //Eliminating invalid moves
             foreach (var item in invalidMoves)
-                validDirections.Remove(item);
-
-            return validDirections;
+                directions.Remove(item);
         }
 
         /// <summary>
         /// Changes bool flag of the provided wall to false for both the current cell and adjacent cell.
         /// </summary>
-        /// <param name="position"></param>
+        /// <param name="pos"></param>
         /// <param name="direction"></param>
-        private void RemoveWall(CellPosition position, Direction direction)
+        private void RemoveWall(CellPosition pos, Direction direction)
         {
             switch (direction)
             {
                 case Direction.North:
-                    Board[position.X, position.Y].NorthWall = false;
-                    Board[position.X, position.Y - 1].SouthWall = false;
+                    Board[pos.X, pos.Y].NorthWall = false;
+                    Board[pos.X, pos.Y - 1].SouthWall = false;
                     break;
                 case Direction.East:
-                    Board[position.X, position.Y].EastWall = false;
-                    Board[position.X + 1, position.Y].WestWall = false;
+                    Board[pos.X, pos.Y].EastWall = false;
+                    Board[pos.X + 1, pos.Y].WestWall = false;
                     break;
                 case Direction.South:
-                    Board[position.X, position.Y].SouthWall = false;
-                    Board[position.X, position.Y + 1].NorthWall = false;
+                    Board[pos.X, pos.Y].SouthWall = false;
+                    Board[pos.X, pos.Y + 1].NorthWall = false;
                     break;
                 case Direction.West:
-                    Board[position.X, position.Y].WestWall = false;
-                    Board[position.X - 1, position.Y].EastWall = false;
+                    Board[pos.X, pos.Y].WestWall = false;
+                    Board[pos.X - 1, pos.Y].EastWall = false;
                     break;
             }
         }
 
         /// <summary>
-        /// Returns if the provided cell has been visited or not.
+        /// Returns if the Cell has been visited or not
         /// </summary>
-        /// <param name="cellX"></param>
-        /// <param name="cellY"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         /// <returns></returns>
-        private bool CellVisited(int cellX, int cellY)
+        private bool CellVisited(int x, int y)
         {
-            return Board[cellX, cellY].Visited;
+            return Board[x, y].Visited;
         }
 
         /// <summary>
@@ -245,5 +229,6 @@ namespace Level
 
             return adjPosition;
         }
+        #endregion
     }
 }
