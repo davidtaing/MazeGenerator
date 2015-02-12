@@ -10,8 +10,8 @@ namespace Level
 {
     public class Maze
     {
-        private int Height;
-        private int Width;
+        public int Height { get; set; }
+        public int Width { get; set; }
 
         public Cell[,] Board;
         private Random r = new Random();
@@ -21,12 +21,14 @@ namespace Level
         /// </summary>
         /// <param name="height"></param>
         /// <param name="width"></param>
-        public Maze(int height, int width)
+        public Maze()
         {
-            Height = height;
-            Width = width;
+            Initialise();
+        }
 
-            Board = new Cell[height, width];
+        private void Initialise()
+        {
+            Board = new Cell[Height, Width];
             InitBoard();
         }
 
