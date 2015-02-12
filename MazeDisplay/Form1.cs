@@ -13,8 +13,8 @@ namespace MazeDisplay
 {
     public partial class Form1 : Form
     {
-        public static int Height = 20;
-        public static int Width = 20;
+        public static int Height = 5;
+        public static int Width = 5;
         private Maze maze = new Maze();
 
 
@@ -26,6 +26,11 @@ namespace MazeDisplay
             maze.Generate();
         }
 
+        /// <summary>
+        /// Draws the grid and walls of the field
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -86,12 +91,22 @@ namespace MazeDisplay
 
         }
 
+        /// <summary>
+        /// Opens a prompt, where the user can change the field dimensions
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void changeDimensionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ChangeSizeForm f2 = new ChangeSizeForm();
             f2.Show();
         }
 
+        /// <summary>
+        /// Generates a new maze
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
             maze.Height = Height;
