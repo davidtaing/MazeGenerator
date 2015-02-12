@@ -15,12 +15,14 @@ namespace MazeDisplay
     {
         public static int Height = 20;
         public static int Width = 20;
-        private Maze maze = new Maze(Height, Width);
+        private Maze maze = new Maze();
 
 
         public Form1()
         {
             InitializeComponent();
+            maze.Height = Height;
+            maze.Width = Width;
             maze.Generate();
         }
 
@@ -92,7 +94,8 @@ namespace MazeDisplay
 
         private void button1_Click(object sender, EventArgs e)
         {
-            maze = new Maze(Height, Width);
+            maze.Height = Height;
+            maze.Width = Width;
             maze.Generate();
             panel1.Invalidate();
         }
