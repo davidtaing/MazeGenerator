@@ -13,8 +13,8 @@ namespace MazeDisplay
 {
     public partial class Form1 : Form
     {
-        public static int Height = 5;
-        public static int Width = 5;
+        public static int Height = 20;
+        public static int Width = 20;
         private Maze maze = new Maze();
 
 
