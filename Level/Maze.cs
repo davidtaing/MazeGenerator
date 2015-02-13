@@ -66,6 +66,7 @@ namespace Level
         /// <param name="currentPos"></param>
         private void CarvePassage(CellPosition currentPos)
         {
+            Board[currentPos.X, currentPos.Y].Visited = true;
             List<Direction> validDirections = PopulateDirections();
             GetValidDirections(currentPos, validDirections);
 
@@ -80,17 +81,13 @@ namespace Level
 
                 //Remove corresponding wall
                 RemoveWall(currentPos, rndDirection);
-                Board[currentPos.X, currentPos.Y].Visited = true;
 
                 //Remove selected direction for validDirections List
                 validDirections.Remove(rndDirection);
 
-                //Recursively call CarvePassage if rndDirection is valid
-                if (rndDirection != Direction.INVALID)
-                {
-                    CellPosition newPos = GetAdjTilePos(currentPos, rndDirection);
-                    CarvePassage(newPos);
-                }
+                //Recursively call CarvePassage using the new position as the current position
+                CellPosition newPos = GetAdjTilePos(currentPos, rndDirection);
+                CarvePassage(newPos);
 
                 //Update Valid Directions
                 GetValidDirections(currentPos, validDirections);
