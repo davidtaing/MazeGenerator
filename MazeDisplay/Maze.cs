@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace MazeDisplay
 {
     public class Maze
     {
+        public Cell[,] Board;
+        private readonly Random rng = new Random();
+
         public int Height { get; set; }
         public int Width { get; set; }
 
-        public Cell[,] Board;
-        private Random r = new Random();
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public Maze()
         {
             Initialise();
@@ -24,24 +22,23 @@ namespace MazeDisplay
         /// </summary>
         private void Initialise()
         {
-            Board = new Cell[Width, Height];
+            Board = new Cell[Height, Width];
 
             //Populate default values of the cells
-            for (int col = 0; col < Width; col++)
+            for (int row = 0; row < Height; row++)
             {
-                for (int row = 0; row < Height; row++)
+                for (int col = 0; col < Width; col++)
                 {
-                    Board[col, row] = new Cell();
+                    Board[row, col] = new Cell();
                 }
             }
         }
 
         /// <summary>
-        /// Overloaded
         /// </summary>
         public void Generate()
         {
-            Generate(r.Next(Width), r.Next(Height));
+            Generate(rng.Next(Width), rng.Next(Height));
         }
         
         /// <summary>
@@ -59,60 +56,48 @@ namespace MazeDisplay
         /// Sub-routine in the generate method.
         /// </summary>
         /// <param name="currentPos"></param>
-        private void CarvePassage(MazeDisplay.CellPosition currentPos)
+        private void CarvePassage(Point currentPos)
         {
-            Board[currentPos.X, currentPos.Y].Visited = true;
-            List<Direction> validDirections = PopulateDirections();
-            GetValidDirections(currentPos, validDirections);
+            Board[currentPos.Y, currentPos.X].Visited = true;
+            List<Direction> validDirections = GetAllDirections();
+            ValidateDirections(currentPos, validDirections);
 
             while (validDirections.Count > 0)
             {
-                Direction rndDirection = Direction.INVALID;
+                Direction rndDirection = Direction.Invalid;
 
                 if (validDirections.Count > 1)
-                    rndDirection = validDirections[r.Next(validDirections.Count)];
+                    rndDirection = validDirections[rng.Next(validDirections.Count)];
                 else if (validDirections.Count == 1)
                     rndDirection = validDirections[0];
 
-                //Remove corresponding wall
                 RemoveWall(currentPos, rndDirection);
-
-                //Remove selected direction for validDirections List
                 validDirections.Remove(rndDirection);
-
-                //Recursively call CarvePassage using the new position as the current position
-                MazeDisplay.CellPosition newPos = GetAdjTilePos(currentPos, rndDirection);
+                Point newPos = GetAdjPos(currentPos, rndDirection);
                 CarvePassage(newPos);
 
-                //Update Valid Directions
-                GetValidDirections(currentPos, validDirections);
+                ValidateDirections(currentPos, validDirections);
             }
         }
 
-        /// <summary>
-        /// Overloaded
-        /// </summary>
         /// <param name="currentX"></param>
         /// <param name="currentY"></param>
         private void CarvePassage(int currentX, int currentY)
         {
-            CarvePassage(new MazeDisplay.CellPosition(currentX, currentY));
+            CarvePassage(new Point(currentX, currentY));
         }
 
-        #region CarvePassage Subroutines
         /// <summary>
         /// Populates the provided list with all directions
         /// </summary>
-        private List<Direction> PopulateDirections()
+        private List<Direction> GetAllDirections()
         {
-            List<Direction> validDirections = new List<Direction>() {
+            return new List<Direction>() {
                 Direction.North,
                 Direction.East,
                 Direction.South,
                 Direction.West
             };
-
-            return validDirections;
         }
 
         /// <summary>
@@ -120,37 +105,36 @@ namespace MazeDisplay
         /// </summary>
         /// <param name="cellPos"></param>
         /// <param name="directions"></param>
-        private void GetValidDirections(MazeDisplay.CellPosition cellPos, List<Direction> directions)
+        private void ValidateDirections(Point cellPos, List<Direction> directions)
         {
-            List<Direction> invalidMoves = new List<Direction>();
+            List<Direction> invalidDirections = new List<Direction>();
 
-            //Checking for invalid moves
+            // Check for invalid moves
             for (int i = 0; i < directions.Count; i++)
             {
                 switch (directions[i])
                 {
                     case Direction.North:
                         if (cellPos.Y == 0 || CellVisited(cellPos.X, cellPos.Y - 1))
-                            invalidMoves.Add(Direction.North);
+                            invalidDirections.Add(Direction.North);
                         break;
                     case Direction.East:
                         if (cellPos.X == Width - 1 || CellVisited(cellPos.X + 1, cellPos.Y))
-                            invalidMoves.Add(Direction.East);
+                            invalidDirections.Add(Direction.East);
                         break;
                     case Direction.South:
                         if (cellPos.Y == Height - 1 || CellVisited(cellPos.X, cellPos.Y + 1))
-                            invalidMoves.Add(Direction.South);
+                            invalidDirections.Add(Direction.South);
                         break;
                     case Direction.West:
                         if (cellPos.X == 0 || CellVisited(cellPos.X - 1, cellPos.Y))
-                            invalidMoves.Add(Direction.West);
+                            invalidDirections.Add(Direction.West);
                         break;
                 }
-
             }
-
-            //Eliminating invalid moves
-            foreach (var item in invalidMoves)
+            
+            // Eliminating invalid moves
+            foreach (var item in invalidDirections)
                 directions.Remove(item);
         }
 
@@ -159,49 +143,48 @@ namespace MazeDisplay
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="direction"></param>
-        private void RemoveWall(MazeDisplay.CellPosition pos, Direction direction)
+        private void RemoveWall(Point pos, Direction direction)
         {
             switch (direction)
             {
                 case Direction.North:
-                    Board[pos.X, pos.Y].NorthWall = false;
-                    Board[pos.X, pos.Y - 1].SouthWall = false;
+                    Board[pos.Y, pos.X].NorthWall = false;
+                    Board[pos.Y - 1, pos.X].SouthWall = false;
                     break;
                 case Direction.East:
-                    Board[pos.X, pos.Y].EastWall = false;
-                    Board[pos.X + 1, pos.Y].WestWall = false;
+                    Board[pos.Y, pos.X].EastWall = false;
+                    Board[pos.Y, pos.X + 1].WestWall = false;
                     break;
                 case Direction.South:
-                    Board[pos.X, pos.Y].SouthWall = false;
-                    Board[pos.X, pos.Y + 1].NorthWall = false;
+                    Board[pos.Y, pos.X].SouthWall = false;
+                    Board[pos.Y + 1, pos.X].NorthWall = false;
                     break;
                 case Direction.West:
-                    Board[pos.X, pos.Y].WestWall = false;
-                    Board[pos.X - 1, pos.Y].EastWall = false;
+                    Board[pos.Y, pos.X].WestWall = false;
+                    Board[pos.Y, pos.X - 1].EastWall = false;
                     break;
             }
         }
 
         /// <summary>
-        /// Returns if the Cell has been visited or not
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
         private bool CellVisited(int x, int y)
         {
-            return Board[x, y].Visited;
+            return Board[y, x].Visited;
         }
 
         /// <summary>
-        /// Returns the position of the adjacent cell
+        /// Returns the position of an adjacent cell.
         /// </summary>
         /// <param name="position"></param>
         /// <param name="direction"></param>
         /// <returns></returns>
-        private MazeDisplay.CellPosition GetAdjTilePos(MazeDisplay.CellPosition position, Direction direction)
+        private Point GetAdjPos(Point position, Direction direction)
         {
-            MazeDisplay.CellPosition adjPosition = new MazeDisplay.CellPosition(position.X, position.Y);
+            Point adjPosition = position;
 
             switch (direction)
             {
@@ -221,6 +204,5 @@ namespace MazeDisplay
 
             return adjPosition;
         }
-        #endregion
     }
 }

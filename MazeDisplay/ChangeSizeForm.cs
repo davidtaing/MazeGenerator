@@ -15,14 +15,14 @@ namespace MazeDisplay
         public ChangeSizeForm()
         {
             InitializeComponent();
-            numericUpDown_Height.Value = Form1.Height;
-            numericUpDown_Width.Value = Form1.Width;
+            numericUpDown_Height.Value = Form1.MazeHeight;
+            numericUpDown_Width.Value = Form1.MazeWidth;
         }
 
         private void button_Save_Click(object sender, EventArgs e)
         {
-            Form1.Height = (int)numericUpDown_Height.Value;
-            Form1.Width = (int)numericUpDown_Width.Value;
+            Form1.MazeHeight = (int)numericUpDown_Height.Value;
+            Form1.MazeWidth = (int)numericUpDown_Width.Value;
             MessageBox.Show("Dimensions Saved.");
         }
     }
