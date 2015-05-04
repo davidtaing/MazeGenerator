@@ -8,14 +8,13 @@ namespace MazeDisplay
     {
         public static int MazeHeight = 20;
         public static int MazeWidth = 20;
-        private Maze maze = new Maze();
+        private Maze maze;
 
 
         public Form1()
         {
             InitializeComponent();
-            maze.Height = MazeHeight;
-            maze.Width = MazeWidth;
+            maze = new Maze(MazeHeight, MazeWidth);
             maze.Generate();
         }
 
@@ -33,25 +32,32 @@ namespace MazeDisplay
             int cellWidth = panel1.Width / MazeWidth;
 
 
-            //Draw Grid Lines
+            DrawGrid(g, grid, cellHeight, cellWidth);
+            DrawWalls(g, wall, cellHeight, cellWidth);
+        }
+
+        private void DrawGrid(Graphics g, Pen grid, int cellHeight, int cellWidth)
+        {
             for (int row = 1; row < MazeHeight; row++)
             {
-                g.DrawLine(grid, 0, cellHeight * row, panel1.Width, cellHeight * row);
+                g.DrawLine(grid, 0, cellHeight*row, panel1.Width, cellHeight*row);
             }
 
             for (int col = 1; col < MazeWidth; col++)
             {
-                g.DrawLine(grid, cellWidth * col, 0, cellWidth * col , panel1.Height);
+                g.DrawLine(grid, cellWidth*col, 0, cellWidth*col, panel1.Height);
             }
+        }
 
-            //Draw Maze Walls
+        private void DrawWalls(Graphics g, Pen wall, int cellHeight, int cellWidth)
+        {
             for (int row = 0; row < MazeHeight; row++)
             {
                 for (int col = 0; col < MazeWidth; col++)
                 {
                     //Calculate current positions
-                    int xCurrent = cellWidth * col;
-                    int yCurrent = cellHeight * row;
+                    int xCurrent = cellWidth*col;
+                    int yCurrent = cellHeight*row;
 
                     PointF p1;
                     PointF p2;
@@ -82,11 +88,10 @@ namespace MazeDisplay
                     }
                 }
             }
-
         }
 
         /// <summary>
-        /// Opens a prompt, where the user can change the field dimensions
+        /// Opens a prompt, where the user can change the field dimensions.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -97,14 +102,13 @@ namespace MazeDisplay
         }
 
         /// <summary>
-        /// Generates a new maze
+        /// Generates a new maze.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonGenerate_Click(object sender, EventArgs e)
         {
-            maze.Height = MazeHeight;
-            maze.Width = MazeWidth;
+            maze = new Maze(MazeHeight, MazeWidth);
             maze.Generate();
             panel1.Invalidate();
         }

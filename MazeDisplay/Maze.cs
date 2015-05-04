@@ -4,18 +4,33 @@ using System.Drawing;
 
 namespace MazeDisplay
 {
+    /// <summary>
+    /// This class contains a maze that is
+    /// generated using the recursive backtracker algorithm. 
+    /// </summary>
     public class Maze
     {
         public Cell[,] Board;
+        public readonly int Height;
+        public readonly int Width;
         private readonly Random rng = new Random();
 
-        public int Height { get; set; }
-        public int Width { get; set; }
-
-        public Maze()
+        public Maze(int width, int height)
         {
-            Board = new Cell[Height, Width];
+            this.Height = height;
+            this.Width = width;
+            Board = new Cell[height, width];
             Initialise();
+        }
+
+        public void Generate()
+        {
+            Generate(rng.Next(Width), rng.Next(Height));
+        }
+        
+        public void Generate(int startX, int startY)
+        {
+            CarvePassage(startX, startY);
         }
 
         /// <summary>
@@ -32,19 +47,8 @@ namespace MazeDisplay
             }
         }
 
-        public void Generate()
-        {
-            Generate(rng.Next(Width), rng.Next(Height));
-        }
-        
-        public void Generate(int startX, int startY)
-        {
-            Initialise();
-            CarvePassage(startX, startY);
-        }
-
         /// <summary>
-        /// Sub-routine in the generate method.
+        /// Recursive backtracking maze generation algorithm.
         /// </summary>
         /// <param name="currentPos"></param>
         private void CarvePassage(Point currentPos)
