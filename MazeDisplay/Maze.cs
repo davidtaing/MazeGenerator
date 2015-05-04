@@ -14,38 +14,29 @@ namespace MazeDisplay
 
         public Maze()
         {
+            Board = new Cell[Height, Width];
             Initialise();
         }
 
         /// <summary>
-        /// Creates board and populates all cells with default values.
+        /// Populates board with default Cells.
         /// </summary>
         private void Initialise()
         {
-            Board = new Cell[Height, Width];
-
-            //Populate default values of the cells
             for (int row = 0; row < Height; row++)
             {
                 for (int col = 0; col < Width; col++)
                 {
-                    Board[row, col] = new Cell();
+                    this.Board[row, col] = new Cell();
                 }
             }
         }
 
-        /// <summary>
-        /// </summary>
         public void Generate()
         {
             Generate(rng.Next(Width), rng.Next(Height));
         }
         
-        /// <summary>
-        /// Generates a maze using the recursive backtracker algorithim.
-        /// </summary>
-        /// <param name="startX"></param>
-        /// <param name="startY"></param>
         public void Generate(int startX, int startY)
         {
             Initialise();
@@ -58,7 +49,7 @@ namespace MazeDisplay
         /// <param name="currentPos"></param>
         private void CarvePassage(Point currentPos)
         {
-            Board[currentPos.Y, currentPos.X].Visited = true;
+            this.Board[currentPos.Y, currentPos.X].Visited = true;
             List<Direction> validDirections = GetAllDirections();
             ValidateDirections(currentPos, validDirections);
 
@@ -74,22 +65,18 @@ namespace MazeDisplay
                 RemoveWall(currentPos, rndDirection);
                 validDirections.Remove(rndDirection);
                 Point newPos = GetAdjPos(currentPos, rndDirection);
+
                 CarvePassage(newPos);
 
                 ValidateDirections(currentPos, validDirections);
             }
         }
 
-        /// <param name="currentX"></param>
-        /// <param name="currentY"></param>
         private void CarvePassage(int currentX, int currentY)
         {
             CarvePassage(new Point(currentX, currentY));
         }
 
-        /// <summary>
-        /// Populates the provided list with all directions
-        /// </summary>
         private List<Direction> GetAllDirections()
         {
             return new List<Direction>() {
@@ -100,11 +87,6 @@ namespace MazeDisplay
             };
         }
 
-        /// <summary>
-        /// Validates directions for the provided cell
-        /// </summary>
-        /// <param name="cellPos"></param>
-        /// <param name="directions"></param>
         private void ValidateDirections(Point cellPos, List<Direction> directions)
         {
             List<Direction> invalidDirections = new List<Direction>();
@@ -138,50 +120,34 @@ namespace MazeDisplay
                 directions.Remove(item);
         }
 
-        /// <summary>
-        /// Changes bool flag of the provided wall to false for both the current cell and adjacent cell.
-        /// </summary>
-        /// <param name="pos"></param>
-        /// <param name="direction"></param>
         private void RemoveWall(Point pos, Direction direction)
         {
             switch (direction)
             {
                 case Direction.North:
-                    Board[pos.Y, pos.X].NorthWall = false;
-                    Board[pos.Y - 1, pos.X].SouthWall = false;
+                    this.Board[pos.Y, pos.X].NorthWall = false;
+                    this.Board[pos.Y - 1, pos.X].SouthWall = false;
                     break;
                 case Direction.East:
-                    Board[pos.Y, pos.X].EastWall = false;
-                    Board[pos.Y, pos.X + 1].WestWall = false;
+                    this.Board[pos.Y, pos.X].EastWall = false;
+                    this.Board[pos.Y, pos.X + 1].WestWall = false;
                     break;
                 case Direction.South:
-                    Board[pos.Y, pos.X].SouthWall = false;
-                    Board[pos.Y + 1, pos.X].NorthWall = false;
+                    this.Board[pos.Y, pos.X].SouthWall = false;
+                    this.Board[pos.Y + 1, pos.X].NorthWall = false;
                     break;
                 case Direction.West:
-                    Board[pos.Y, pos.X].WestWall = false;
-                    Board[pos.Y, pos.X - 1].EastWall = false;
+                    this.Board[pos.Y, pos.X].WestWall = false;
+                    this.Board[pos.Y, pos.X - 1].EastWall = false;
                     break;
             }
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
         private bool CellVisited(int x, int y)
         {
-            return Board[y, x].Visited;
+            return this.Board[y, x].Visited;
         }
 
-        /// <summary>
-        /// Returns the position of an adjacent cell.
-        /// </summary>
-        /// <param name="position"></param>
-        /// <param name="direction"></param>
-        /// <returns></returns>
         private Point GetAdjPos(Point position, Direction direction)
         {
             Point adjPosition = position;
