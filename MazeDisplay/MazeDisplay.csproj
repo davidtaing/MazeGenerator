@@ -48,18 +48,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cell.cs" />
+    <Compile Include="CellPosition.cs" />
     <Compile Include="ChangeSizeForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ChangeSizeForm.Designer.cs">
       <DependentUpon>ChangeSizeForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Direction.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Maze.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ChangeSizeForm.resx">
