@@ -67,7 +67,7 @@ namespace MazeDisplay
 
             while (validDirections.Count > 0)
             {
-                Direction rndDirection = Direction.Invalid;
+                Direction rndDirection = Direction.INVALID;
 
                 if (validDirections.Count > 1)
                     rndDirection = validDirections[r.Next(validDirections.Count)];
