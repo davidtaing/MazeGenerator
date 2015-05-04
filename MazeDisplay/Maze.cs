@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Level
+namespace MazeDisplay
 {
     public class Maze
     {
@@ -64,7 +59,7 @@ namespace Level
         /// Sub-routine in the generate method.
         /// </summary>
         /// <param name="currentPos"></param>
-        private void CarvePassage(CellPosition currentPos)
+        private void CarvePassage(MazeDisplay.CellPosition currentPos)
         {
             Board[currentPos.X, currentPos.Y].Visited = true;
             List<Direction> validDirections = PopulateDirections();
@@ -86,7 +81,7 @@ namespace Level
                 validDirections.Remove(rndDirection);
 
                 //Recursively call CarvePassage using the new position as the current position
-                CellPosition newPos = GetAdjTilePos(currentPos, rndDirection);
+                MazeDisplay.CellPosition newPos = GetAdjTilePos(currentPos, rndDirection);
                 CarvePassage(newPos);
 
                 //Update Valid Directions
@@ -101,7 +96,7 @@ namespace Level
         /// <param name="currentY"></param>
         private void CarvePassage(int currentX, int currentY)
         {
-            CarvePassage(new CellPosition(currentX, currentY));
+            CarvePassage(new MazeDisplay.CellPosition(currentX, currentY));
         }
 
         #region CarvePassage Subroutines
@@ -125,7 +120,7 @@ namespace Level
         /// </summary>
         /// <param name="cellPos"></param>
         /// <param name="directions"></param>
-        private void GetValidDirections(CellPosition cellPos, List<Direction> directions)
+        private void GetValidDirections(MazeDisplay.CellPosition cellPos, List<Direction> directions)
         {
             List<Direction> invalidMoves = new List<Direction>();
 
@@ -164,7 +159,7 @@ namespace Level
         /// </summary>
         /// <param name="pos"></param>
         /// <param name="direction"></param>
-        private void RemoveWall(CellPosition pos, Direction direction)
+        private void RemoveWall(MazeDisplay.CellPosition pos, Direction direction)
         {
             switch (direction)
             {
@@ -204,9 +199,9 @@ namespace Level
         /// <param name="position"></param>
         /// <param name="direction"></param>
         /// <returns></returns>
-        private CellPosition GetAdjTilePos(CellPosition position, Direction direction)
+        private MazeDisplay.CellPosition GetAdjTilePos(MazeDisplay.CellPosition position, Direction direction)
         {
-            CellPosition adjPosition = new CellPosition(position.X, position.Y);
+            MazeDisplay.CellPosition adjPosition = new MazeDisplay.CellPosition(position.X, position.Y);
 
             switch (direction)
             {
