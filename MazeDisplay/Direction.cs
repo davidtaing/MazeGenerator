@@ -1,11 +1,14 @@
-﻿namespace MazeDisplay
+﻿using System;
+
+namespace MazeDisplay
 {
+    [Flags]
     public enum Direction
     {
-        North,
-        East,
-        South,
-        West,
-        INVALID
+        Invalid = 0,
+        North = 1,
+        East = 2,
+        South = 4,
+        West = 8
     }
 }
