@@ -6,8 +6,8 @@ namespace MazeDisplay
 {
     public partial class Form1 : Form
     {
-        public static int MazeHeight = 20;
-        public static int MazeWidth = 20;
+        public static int MazeHeight = 5;
+        public static int MazeWidth = 5;
         private Maze maze;
 
 
@@ -16,6 +16,7 @@ namespace MazeDisplay
             InitializeComponent();
             maze = new Maze(MazeHeight, MazeWidth);
             maze.Generate();
+            draw_output();
         }
 
         /// <summary>
@@ -28,12 +29,19 @@ namespace MazeDisplay
             Graphics g = e.Graphics;
             Pen grid = new Pen(Color.LightCyan, 3);
             Pen wall = new Pen(Color.Black, 5);
+            Brush brush_start = new SolidBrush(Color.LightGoldenrodYellow);
             int cellHeight = panel1.Height / MazeHeight;
             int cellWidth = panel1.Width / MazeWidth;
 
 
             DrawGrid(g, grid, cellHeight, cellWidth);
             DrawWalls(g, wall, cellHeight, cellWidth);
+            DrawStart(g, brush_start, maze.Start, cellHeight, cellWidth);
+        }
+
+        private void DrawStart(Graphics g, Brush brush_start, Point start, int cellHeight, int cellWidth)
+        {
+            g.FillEllipse(brush_start, (cellWidth * start.X ) + (cellWidth / 4), (cellHeight * start.Y ) + (cellHeight / 4), cellWidth / 2, cellHeight / 2);
         }
 
         private void DrawGrid(Graphics g, Pen grid, int cellHeight, int cellWidth)
@@ -111,6 +119,17 @@ namespace MazeDisplay
             maze = new Maze(MazeHeight, MazeWidth);
             maze.Generate();
             panel1.Invalidate();
+            draw_output();
+        }
+
+        private void draw_output()
+        {
+            this.txt_output.Text = "";
+            foreach (Tuple<Point, Direction> item in maze.Points)
+            {
+                this.txt_output.Text += item.Item1.X + " / " + item.Item1.Y + " - " + item.Item2.ToString() + Environment.NewLine;
+            }
+
         }
     }
 }

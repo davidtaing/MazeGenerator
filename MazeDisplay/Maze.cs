@@ -14,6 +14,8 @@ namespace MazeDisplay
         public readonly int Height;
         public readonly int Width;
         private readonly Random rng = new Random();
+        public Point Start = new Point(0,0);
+        public List<Tuple<Point, Direction>> Points = new List<Tuple<Point, Direction>>();
 
         public Maze(int width, int height)
         {
@@ -30,6 +32,8 @@ namespace MazeDisplay
         
         public void Generate(int startX, int startY)
         {
+            this.Start = new Point(startX, startY);
+            Points = new List<Tuple<Point, Direction>>();
             CarvePassage(startX, startY);
         }
 
@@ -53,6 +57,8 @@ namespace MazeDisplay
         /// <param name="currentPos"></param>
         private void CarvePassage(Point currentPos)
         {
+       
+
             this.Board[currentPos.Y, currentPos.X].Visited = true;
             List<Direction> validDirections = GetAllDirections();
             ValidateDirections(currentPos, validDirections);
@@ -69,6 +75,8 @@ namespace MazeDisplay
                 RemoveWall(currentPos, rndDirection);
                 validDirections.Remove(rndDirection);
                 Point newPos = GetAdjPos(currentPos, rndDirection);
+                Points.Add(new Tuple<Point, Direction>(currentPos, rndDirection));
+
 
                 CarvePassage(newPos);
 
