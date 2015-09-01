@@ -15,7 +15,9 @@ namespace MazeDisplay
         public readonly int Width;
         private readonly Random rng = new Random();
         public Point Start = new Point(0,0);
-        public List<Tuple<Point, Direction>> Points = new List<Tuple<Point, Direction>>();
+        public Point End = new Point(0, 0);
+        public List<Tuple<Point, Direction, int>> Points = new List<Tuple<Point, Direction, int>>();
+        public int iterationcount = 0;
 
         public Maze(int width, int height)
         {
@@ -33,7 +35,7 @@ namespace MazeDisplay
         public void Generate(int startX, int startY)
         {
             this.Start = new Point(startX, startY);
-            Points = new List<Tuple<Point, Direction>>();
+            Points = new List<Tuple<Point, Direction, int>>();
             CarvePassage(startX, startY);
         }
 
@@ -57,11 +59,18 @@ namespace MazeDisplay
         /// <param name="currentPos"></param>
         private void CarvePassage(Point currentPos)
         {
-       
 
+            this.Board[currentPos.Y, currentPos.X].Point = new Point(currentPos.X, currentPos.Y);
             this.Board[currentPos.Y, currentPos.X].Visited = true;
+            this.Board[currentPos.Y, currentPos.X].position_in_iteration = ++iterationcount;
             List<Direction> validDirections = GetAllDirections();
             ValidateDirections(currentPos, validDirections);
+
+            //If there is no valid direction we have found a dead end.
+            if (validDirections.Count == 0)
+            {
+                this.Board[currentPos.Y, currentPos.X].isdeadend = true;
+            }
 
             while (validDirections.Count > 0)
             {
@@ -75,9 +84,8 @@ namespace MazeDisplay
                 RemoveWall(currentPos, rndDirection);
                 validDirections.Remove(rndDirection);
                 Point newPos = GetAdjPos(currentPos, rndDirection);
-                Points.Add(new Tuple<Point, Direction>(currentPos, rndDirection));
-
-
+                Points.Add(new Tuple<Point, Direction, int>(currentPos, rndDirection, iterationcount));
+                
                 CarvePassage(newPos);
 
                 ValidateDirections(currentPos, validDirections);
@@ -182,5 +190,7 @@ namespace MazeDisplay
 
             return adjPosition;
         }
+
+    
     }
 }

@@ -23,7 +23,9 @@ namespace MazeDisplay
         {
             Form1.MazeHeight = (int)numericUpDown_Height.Value;
             Form1.MazeWidth = (int)numericUpDown_Width.Value;
-            MessageBox.Show("Dimensions Saved.");
+            //MessageBox.Show("Dimensions Saved.");
+            //Close this form and generate the maze
+            this.Close();
         }
     }
 }
