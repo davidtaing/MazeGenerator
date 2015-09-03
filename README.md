@@ -5,7 +5,7 @@ This program was created for an assignment at school. I was tasked to create a D
 How it works:
 1. Choose a starting point in the field.
 
-2. Randomly choose a wall at that point and carve a passage through to the adjacent cell, but only if th adjacent cell has not been visited yet. This becomes the new current cell.
+2. Randomly choose a wall at that point and carve a passage through to the adjacent cell, but only if the adjacent cell has not been visited yet. This becomes the new current cell.
 
 3. If all adjacent cells have been visited, back up to the last cell that has uncarved walls and repeat.
 

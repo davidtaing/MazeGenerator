@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace MazeDisplay
 {
     public partial class Form1 : Form
     {
-        public static int MazeHeight = 20;
-        public static int MazeWidth = 20;
+        public static int MazeHeight = 8;
+        public static int MazeWidth = 8;
         private Maze maze;
 
 
         public Form1()
         {
             InitializeComponent();
-            maze = new Maze(MazeHeight, MazeWidth);
-            maze.Generate();
+            this.GenerateMazeLetsGo();
         }
 
         /// <summary>
@@ -28,12 +28,49 @@ namespace MazeDisplay
             Graphics g = e.Graphics;
             Pen grid = new Pen(Color.LightCyan, 3);
             Pen wall = new Pen(Color.Black, 5);
+            Brush brush_start = new SolidBrush(Color.LightGoldenrodYellow);
+            Brush brush_end = new SolidBrush(Color.LightSeaGreen);
             int cellHeight = panel1.Height / MazeHeight;
             int cellWidth = panel1.Width / MazeWidth;
 
 
             DrawGrid(g, grid, cellHeight, cellWidth);
+            DrawStart(g, brush_start, maze.Start, cellHeight, cellWidth);
+            DrawDeadEnd(g, brush_end, cellHeight, cellWidth);
+
             DrawWalls(g, wall, cellHeight, cellWidth);
+ 
+            DrawPositionIteration(g, cellHeight, cellWidth);
+        }
+
+        private void DrawPositionIteration(Graphics g, int cellHeight, int cellWidth)
+        {
+            Font drawFont = new Font("Arial", cellHeight/7);
+            SolidBrush drawBrush = new SolidBrush(Color.Black);
+
+            foreach (Cell item in maze.Board)
+            {
+                RectangleF drawRect = new RectangleF((cellWidth * item.Point.X) + (cellWidth / 3), (cellHeight * item.Point.Y) + (cellHeight / 3), cellWidth / 2, cellHeight / 2);
+                g.DrawString(item.position_in_iteration.ToString(), drawFont, drawBrush, drawRect);
+            }
+
+        }
+
+        private void DrawDeadEnd(Graphics g, Brush brush, int cellHeight, int cellWidth)
+        {
+            foreach (Cell item in maze.Board)
+            {
+                if (item.isdeadend)
+                {
+                    g.FillRectangle(brush, cellWidth * item.Point.X, cellHeight * item.Point.Y, cellWidth, cellHeight);
+                }
+            }
+        }
+
+        private void DrawStart(Graphics g, Brush brush_start, Point start, int cellHeight, int cellWidth)
+        {
+            //g.FillEllipse(brush_start, (cellWidth * start.X ) + (cellWidth / 4), (cellHeight * start.Y ) + (cellHeight / 4), cellWidth / 2, cellHeight / 2);
+            g.FillRectangle(brush_start, cellWidth * start.X, cellHeight * start.Y, cellWidth , cellHeight );
         }
 
         private void DrawGrid(Graphics g, Pen grid, int cellHeight, int cellWidth)
@@ -98,19 +135,39 @@ namespace MazeDisplay
         private void changeDimensionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ChangeSizeForm f2 = new ChangeSizeForm();
+            f2.FormClosed += ChangeSizeForm_FormClosed;
             f2.Show();
         }
 
-        /// <summary>
-        /// Generates a new maze.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void buttonGenerate_Click(object sender, EventArgs e)
+        private void ChangeSizeForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            GenerateMazeLetsGo();
+        }
+
+        private void draw_output()
+        {
+            this.txt_output.Text = "";
+            foreach (Tuple<Point, Direction,int> item in maze.Points)
+            {
+                this.txt_output.Text +=  item.Item3.ToString() + ": " + item.Item1.X + " / " + item.Item1.Y + " - " + item.Item2.ToString() + Environment.NewLine;
+            }
+
+        }
+
+        private void generateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GenerateMazeLetsGo();
+        }
+
+        /// <summary>
+        /// This method starts the generation and paint process of the new maze.
+        /// </summary>
+        public void GenerateMazeLetsGo() {
+
             maze = new Maze(MazeHeight, MazeWidth);
             maze.Generate();
             panel1.Invalidate();
+            draw_output();
         }
     }
 }
