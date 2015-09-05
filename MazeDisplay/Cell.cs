@@ -13,5 +13,6 @@ namespace MazeDisplay
         public int position_in_iteration;
         public bool isdeadend = false;
         public Point Point;
+        public int visited_count = 0;
     }
 }
