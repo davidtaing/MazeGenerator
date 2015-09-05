@@ -168,5 +168,11 @@ namespace MazeDisplay
             panel1.Invalidate();
             draw_output();
         }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            panel1.Invalidate();
+            draw_output();
+        }
     }
 }
