@@ -147,11 +147,10 @@ namespace MazeDisplay
         private void draw_output()
         {
             this.txt_output.Text = "";
-            foreach (Tuple<Point, Direction,int> item in maze.Points)
+            foreach (Tuple<Cell, Direction> item in maze.Points)
             {
-                this.txt_output.Text +=  item.Item3.ToString() + ": " + item.Item1.X + " / " + item.Item1.Y + " - " + item.Item2.ToString() + Environment.NewLine;
+                this.txt_output.Text += item.Item1.position_in_iteration.ToString() + ": " + item.Item1.Point.X + " / " + item.Item1.Point.Y + " - " + item.Item2.ToString() + " - visited: " + item.Item1.visited_count + Environment.NewLine;
             }
-
         }
 
         private void generateToolStripMenuItem_Click(object sender, EventArgs e)
@@ -166,6 +165,12 @@ namespace MazeDisplay
 
             maze = new Maze(MazeHeight, MazeWidth);
             maze.Generate();
+            panel1.Invalidate();
+            draw_output();
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
             panel1.Invalidate();
             draw_output();
         }

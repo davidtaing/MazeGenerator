@@ -16,7 +16,7 @@ namespace MazeDisplay
         private readonly Random rng = new Random();
         public Point Start = new Point(0,0);
         public Point End = new Point(0, 0);
-        public List<Tuple<Point, Direction, int>> Points = new List<Tuple<Point, Direction, int>>();
+        public List<Tuple<Cell, Direction>> Points = new List<Tuple<Cell, Direction>>();
         public int iterationcount = 0;
 
         public Maze(int width, int height)
@@ -35,7 +35,7 @@ namespace MazeDisplay
         public void Generate(int startX, int startY)
         {
             this.Start = new Point(startX, startY);
-            Points = new List<Tuple<Point, Direction, int>>();
+            Points = new List<Tuple<Cell, Direction>>();
             CarvePassage(startX, startY);
         }
 
@@ -63,6 +63,7 @@ namespace MazeDisplay
             this.Board[currentPos.Y, currentPos.X].Point = new Point(currentPos.X, currentPos.Y);
             this.Board[currentPos.Y, currentPos.X].Visited = true;
             this.Board[currentPos.Y, currentPos.X].position_in_iteration = ++iterationcount;
+
             List<Direction> validDirections = GetAllDirections();
             ValidateDirections(currentPos, validDirections);
 
@@ -70,6 +71,7 @@ namespace MazeDisplay
             if (validDirections.Count == 0)
             {
                 this.Board[currentPos.Y, currentPos.X].isdeadend = true;
+                Points.Add(new Tuple<Cell, Direction>(this.Board[currentPos.Y, currentPos.X], Direction.Invalid));
             }
 
             while (validDirections.Count > 0)
@@ -81,10 +83,12 @@ namespace MazeDisplay
                 else if (validDirections.Count == 1)
                     rndDirection = validDirections[0];
 
+                this.Board[currentPos.Y, currentPos.X].visited_count = ++this.Board[currentPos.Y, currentPos.X].visited_count;
+
                 RemoveWall(currentPos, rndDirection);
                 validDirections.Remove(rndDirection);
                 Point newPos = GetAdjPos(currentPos, rndDirection);
-                Points.Add(new Tuple<Point, Direction, int>(currentPos, rndDirection, iterationcount));
+                Points.Add(new Tuple<Cell, Direction>(this.Board[currentPos.Y, currentPos.X], rndDirection));
                 
                 CarvePassage(newPos);
 
